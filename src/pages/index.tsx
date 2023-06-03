@@ -1,56 +1,97 @@
-import { type NextPage } from "next";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { type InferGetServerSidePropsType } from "next";
+import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import { api } from "~/utils/api";
+import React, { useState, useEffect, useRef } from "react";
+import { SpotifyIcon } from "~/components/icons";
+import { Button } from "~/components/ui/button";
+import { PageLayout } from "~/components/layout";
 
-const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+const Home = ({
+  providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: sessionData } = useSession();
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!ref.current || ref.current === null) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        const x = e.clientX - (rect.left + rect.width / 2);
+        const y = e.clientY - (rect.top + rect.height / 2);
+        setRotation({ x: -y / 36, y: x / 48 });
+      }
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
 
   return (
     <>
       <Head>
         <title>statify</title>
-        <meta name="description" content="gather all of your spotify stats here" />
+        <meta
+          name="description"
+          content="gather all of your spotify stats here"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          
-
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl ">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-            </p>
-            <AuthShowcase />
+      <PageLayout>
+        {!sessionData && (
+          <div className="grid h-screen lg:grid-cols-2">
+            <div className="flex flex-col items-center justify-center gap-8">
+              <h1 className="text-8xl font-bold leading-tight tracking-tighter lg:leading-[1.1]">
+                Statify
+              </h1>
+              <p className="max-w-lg text-center text-lg text-muted-foreground sm:text-xl">
+                Learn more about your Spotify listening history with
+                personalized stats and moods for your favorite songs.
+              </p>
+              {Object.values(providers).map((provider) => (
+                <div key={provider.name}>
+                  <Button
+                    onClick={
+                      sessionData
+                        ? () => void signOut()
+                        : () => void signIn(provider.id)
+                    }
+                    className="text-md"
+                  >
+                    <SpotifyIcon className="mr-2 h-5 w-5 fill-white dark:fill-black" />
+                    Login
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <div
+              ref={ref}
+              className="m-auto hidden flex-col items-center justify-center lg:flex"
+              style={{
+                transform: `perspective(500px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+                transition: "transform 0.1s linear",
+              }}
+            >
+              <SpotifyIcon className="fill-black dark:fill-white lg:w-96" />
+            </div>
           </div>
-        </div>
-      </main>
+        )}
+      </PageLayout>
     </>
   );
 };
 
 export default Home;
 
-const AuthShowcase: React.FC = () => {
-  const { data: sessionData } = useSession();
+export async function getServerSideProps() {
+  const providers = await getProviders();
 
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  );
-
-  return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl ">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
-      </p>
-      <button
-        className="rounded-full bg-black/10 px-10 py-3 font-semibold no-underline transition hover:bg-black/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
-  );
-};
+  return {
+    props: { providers: providers ?? [] },
+  };
+}
