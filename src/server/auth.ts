@@ -5,7 +5,7 @@ import {
   type NextAuthOptions,
   type DefaultSession,
 } from "next-auth";
-import SpotifyProvider from "next-auth/providers/spotify"
+import SpotifyProvider from "next-auth/providers/spotify";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
@@ -61,6 +61,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  pages: {
+    signIn: "/login",
+  },
 };
 
 /**
