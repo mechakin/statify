@@ -81,7 +81,7 @@
 }
 
 body {
-  @apply dark:dark-scrollbar scrollbar bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-gray-50;
+  @apply dark:dark-scrollbar scrollbar;
 }
 
 @layer utilities {
