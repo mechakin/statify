@@ -1,10 +1,15 @@
-import { type InferGetServerSidePropsType } from "next";
-import { getProviders, signIn, signOut, useSession } from "next-auth/react";
+import {
+  type GetServerSidePropsContext,
+  type InferGetServerSidePropsType,
+} from "next";
+import { getProviders, signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import React, { useState, useEffect, useRef } from "react";
 import { SpotifyIcon } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { PageLayout } from "~/components/layout";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
 
 const Home = ({
   providers,
@@ -56,14 +61,9 @@ const Home = ({
               {Object.values(providers).map((provider) => (
                 <div key={provider.name}>
                   <Button
-                    onClick={
-                      sessionData
-                        ? () => void signOut()
-                        : () => void signIn(provider.id)
-                    }
-                    className="text-md"
+                    onClick={() => void signIn(provider.id)}
+                    className="text-xl"
                   >
-                    <SpotifyIcon className="mr-2 h-5 w-5 fill-white dark:fill-black" />
                     Login
                   </Button>
                 </div>
@@ -88,7 +88,13 @@ const Home = ({
 
 export default Home;
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    return { redirect: { destination: `/${session.user.id}` } };
+  }
+
   const providers = await getProviders();
 
   return {
