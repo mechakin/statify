@@ -62,7 +62,7 @@ const Home = ({
                 <div key={provider.name}>
                   <Button
                     onClick={() => void signIn(provider.id)}
-                    className="text-xl"
+                    className="w-28 text-lg"
                   >
                     Login
                   </Button>
