@@ -4,6 +4,7 @@ import {
   getServerSession,
   type NextAuthOptions,
   type DefaultSession,
+  type TokenSet,
 } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { env } from "~/env.mjs";
@@ -37,20 +38,68 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async session({ session, user }) {
+      const [spotify] = await prisma.account.findMany({
+        where: { userId: user.id, provider: "spotify" },
+      });
+      if (
+        spotify &&
+        spotify.expires_at &&
+        spotify.refresh_token &&
+        spotify.expires_at * 1000 < Date.now()
+      ) {
+        // If the access token has expired, try to refresh it
+        try {
+          const response = await fetch(
+            "https://accounts.spotify.com/api/token",
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${Buffer.from(
+                  `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`
+                ).toString("base64")}`,
+              },
+              body: `grant_type=refresh_token&refresh_token=${spotify.refresh_token}`,
+              method: "POST",
+              cache: "no-cache",
+            }
+          );
+
+          const tokens = (await response.json()) as TokenSet;
+
+          if (!response.ok) throw tokens;
+
+          await prisma.account.update({
+            data: {
+              access_token: tokens.access_token,
+              expires_at: Math.floor(
+                Date.now() / 1000 + (tokens.expires_in as number)
+              ),
+              refresh_token: tokens.refresh_token ?? spotify.refresh_token,
+            },
+            where: {
+              provider_providerAccountId: {
+                provider: "spotify",
+                providerAccountId: spotify.providerAccountId,
+              },
+            },
+          });
+        } catch (error) {
+          console.error("Error refreshing access token", error);
+        }
+      }
+      return { ...session, user: { ...session.user, id: user.id } };
+    },
   },
   adapter: PrismaAdapter(prisma),
   providers: [
     SpotifyProvider({
       clientId: env.SPOTIFY_CLIENT_ID,
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
+      // TODO: add scopes for playlist creation
+      authorization: { params: { scope: "user-top-read" } },
     }),
+
     /**
      * ...add more providers here.
      *
