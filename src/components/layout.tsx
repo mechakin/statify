@@ -1,5 +1,4 @@
 import { signOut, useSession } from "next-auth/react";
-import { ModeToggle } from "./mode-toggle";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -9,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { ModeToggle } from "./mode-toggle";
 
 export function PageLayout(props: { children: React.ReactNode }) {
   const { data: sessionData } = useSession();
@@ -27,7 +27,9 @@ export function PageLayout(props: { children: React.ReactNode }) {
                   <DropdownMenuLabel>{sessionData.user.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Share</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => void signOut({callbackUrl: '/'})}>
+                  <DropdownMenuItem
+                    onClick={() => void signOut({ callbackUrl: "/" })}
+                  >
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
