@@ -11,7 +11,7 @@ export default function NotFound() {
         <title>Page not found</title>
       </Head>
       <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="pb-4 text-2xl">Page not found.</h1>
+        <h1 className="pb-4 text-2xl font-semibold tracking-tight">Page not found.</h1>
         <Button>
           <Link href={"/"} className="flex items-center">
             <Icons.arrowLeft className="mr-2" />

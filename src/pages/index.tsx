@@ -2,13 +2,13 @@ import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
 } from "next";
+import { getServerSession } from "next-auth";
 import { getProviders, signIn, useSession } from "next-auth/react";
 import Head from "next/head";
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SpotifyIcon } from "~/components/icons";
-import { Button } from "~/components/ui/button";
 import { PageLayout } from "~/components/layout";
-import { getServerSession } from "next-auth";
+import { Button } from "~/components/ui/button";
 import { authOptions } from "~/server/auth";
 
 const Home = ({
@@ -43,7 +43,7 @@ const Home = ({
         <title>statify</title>
         <meta
           name="description"
-          content="gather all of your spotify stats here"
+          content="Gather all of your spotify stats here!"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -62,7 +62,8 @@ const Home = ({
                 <div key={provider.name}>
                   <Button
                     onClick={() => void signIn(provider.id)}
-                    className="w-28 text-lg"
+                    size={"lg"}
+                    className="text-xl"
                   >
                     Login
                   </Button>

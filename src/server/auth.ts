@@ -2,8 +2,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type NextAuthOptions,
   type DefaultSession,
+  type NextAuthOptions,
   type TokenSet,
 } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
@@ -17,7 +17,15 @@ import { prisma } from "~/server/db";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
+  interface JWT {
+    access_token: string;
+    expires_at: number;
+    refresh_token: string;
+    error?: "RefreshAccessTokenError";
+  }
+
   interface Session extends DefaultSession {
+    error?: "RefreshAccessTokenError";
     user: {
       id: string;
       // ...other properties
@@ -42,11 +50,11 @@ export const authOptions: NextAuthOptions = {
       const [spotify] = await prisma.account.findMany({
         where: { userId: user.id, provider: "spotify" },
       });
+
       if (
-        spotify &&
-        spotify.expires_at &&
-        spotify.refresh_token &&
-        spotify.expires_at * 1000 < Date.now()
+        spotify?.expires_at &&
+        spotify?.refresh_token &&
+        spotify?.expires_at * 1000 < Date.now()
       ) {
         // If the access token has expired, try to refresh it
         try {
@@ -65,7 +73,7 @@ export const authOptions: NextAuthOptions = {
             }
           );
 
-          const tokens = (await response.json()) as TokenSet;
+          const tokens: TokenSet = (await response.json()) as TokenSet;
 
           if (!response.ok) throw tokens;
 
@@ -86,6 +94,7 @@ export const authOptions: NextAuthOptions = {
           });
         } catch (error) {
           console.error("Error refreshing access token", error);
+          session.error = "RefreshAccessTokenError";
         }
       }
       return { ...session, user: { ...session.user, id: user.id } };
@@ -113,6 +122,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/",
   },
+  secret: env.NEXTAUTH_SECRET,
 };
 
 /**
