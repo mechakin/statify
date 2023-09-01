@@ -1,6 +1,6 @@
 import axios, { type AxiosResponse } from "axios";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 type SongData = {
   items: [
@@ -166,9 +166,9 @@ async function getUserData(timePeriod: TimePeriod, accessToken: string) {
 export const userRouter = createTRPCRouter({
   getShortTermUserById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const account = await ctx.prisma.account.findFirst({
-        where: { userId: ctx.session?.user.id },
+        where: { userId: input.id },
       });
 
       if (!account?.access_token) return;
@@ -185,9 +185,9 @@ export const userRouter = createTRPCRouter({
     }),
   getMediumTermUserById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const account = await ctx.prisma.account.findFirst({
-        where: { userId: ctx.session?.user.id },
+        where: { userId: input.id },
       });
 
       if (!account?.access_token) return;
@@ -204,9 +204,9 @@ export const userRouter = createTRPCRouter({
     }),
   getLongTermUserById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const account = await ctx.prisma.account.findFirst({
-        where: { userId: ctx.session?.user.id },
+        where: { userId: input.id },
       });
 
       if (!account?.access_token) return;
@@ -220,5 +220,26 @@ export const userRouter = createTRPCRouter({
         genreInfo,
         recommendationInfo,
       };
+    }),
+  createPlaylist: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const account = await ctx.prisma.account.findFirst({
+        where: { userId: input.id },
+      });
+
+      if (!account?.access_token) return;
+
+      const response = await axios.post(
+        `https://api.spotify.com/v1/users/${input.id}/playlists`,
+        { name: "new playlist", description: "test playlist", public: false },
+        {
+          headers: {
+            Authorization: `Bearer ${account?.access_token}`,
+          },
+        }
+      );
+
+      return response;
     }),
 });

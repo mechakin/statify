@@ -105,8 +105,11 @@ export const authOptions: NextAuthOptions = {
     SpotifyProvider({
       clientId: env.SPOTIFY_CLIENT_ID,
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
-      // TODO: add scopes for playlist creation
-      authorization: { params: { scope: "user-top-read" } },
+      authorization: {
+        params: {
+          scope: "user-top-read playlist-modify-public playlist-modify-private",
+        },
+      },
     }),
 
     /**
