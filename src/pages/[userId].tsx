@@ -1,6 +1,5 @@
 import { Plus } from "lucide-react";
 import { type GetStaticProps, type NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -15,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { Progress } from "~/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { toast } from "~/components/ui/use-toast";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
@@ -36,7 +36,6 @@ function truncateString(string: string) {
 
 const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
   const [queryEnabled, setQueryEnabled] = useState(true);
-  const { data: loggedInUser } = useSession();
 
   const { data: userData } = api.user.getUserInfoById.useQuery({ id: userId });
 
@@ -90,10 +89,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
     return (
       <>
         <h2 className="pb-2 pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Top Genres
+          Your Top Genres
         </h2>
         <div>
           {data.genreInfo.map((genre) => (
@@ -107,10 +103,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         </div>
 
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Top Songs
+          Your Top Songs
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-lg text-muted-foreground lg:pt-1">
@@ -121,7 +114,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4 pb-4 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {data.songInfo.map((song) => {
+          {data.songInfo.slice(0, 5).map((song) => {
             return (
               <a href={song.uri} key={song.id}>
                 <Card className="transition hover:bg-secondary">
@@ -148,10 +141,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Top Artists
+          Your Top Artists
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
@@ -184,10 +174,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Happiest Songs
+          Your Happiest Songs
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
@@ -198,37 +185,47 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {data.songInfo.map((song) => {
-            return (
-              <a href={song.uri} key={song.id}>
-                <Card className="transition hover:bg-secondary">
-                  <CardContent className="pt-4">
-                    <Image
-                      src={
-                        song.album.images[0].url ? song.album.images[0].url : ""
-                      }
-                      width={200}
-                      height={200}
-                      alt={song.name ? song.name : "song's name"}
-                      className="-mb-4 rounded-md"
-                    />
-                  </CardContent>
-                  <CardHeader>
-                    <CardTitle>{song.name}</CardTitle>
-                    <CardDescription>
-                      {truncateString(song.artists[0].name)}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </a>
-            );
-          })}
+          {[...data.songInfo]
+            .sort(
+              (a, b) => (b.moodInfo?.valence ?? 0) - (a.moodInfo?.valence ?? 0)
+            )
+            .slice(0, 5)
+            .map((song) => {
+              return (
+                <a href={song.uri} key={song.id}>
+                  <Card className="transition hover:bg-secondary">
+                    <CardContent className="pt-4">
+                      <Image
+                        src={
+                          song.album.images[0].url
+                            ? song.album.images[0].url
+                            : ""
+                        }
+                        width={200}
+                        height={200}
+                        alt={song.name ? song.name : "song's name"}
+                        className="-mb-4 rounded-md"
+                      />
+                    </CardContent>
+                    <CardHeader>
+                      <CardTitle>{song.name}</CardTitle>
+                      <CardDescription>
+                        {truncateString(song.artists[0].name)}
+                      </CardDescription>
+                      <div className="flex items-center justify-center pt-2">
+                        <p className="mr-2 text-sm text-muted-foreground">
+                          {song.moodInfo?.valence}%
+                        </p>
+                        <Progress value={song.moodInfo?.valence} />
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </a>
+              );
+            })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Most Energetic Songs
+          Your Most Energetic Songs
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
@@ -238,37 +235,47 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           </h3>
         </div>
         <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {data.songInfo.map((song) => {
-            return (
-              <a href={song.uri} key={song.id}>
-                <Card className="transition hover:bg-secondary">
-                  <CardContent className="pt-4">
-                    <Image
-                      src={
-                        song.album.images[0].url ? song.album.images[0].url : ""
-                      }
-                      width={200}
-                      height={200}
-                      alt={song.name ? song.name : "song's name"}
-                      className="-mb-4 rounded-md"
-                    />
-                  </CardContent>
-                  <CardHeader>
-                    <CardTitle>{song.name}</CardTitle>
-                    <CardDescription>
-                      {truncateString(song.artists[0].name)}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </a>
-            );
-          })}
+          {[...data.songInfo]
+            .sort(
+              (a, b) => (b.moodInfo?.energy ?? 0) - (a.moodInfo?.energy ?? 0)
+            )
+            .slice(0, 5)
+            .map((song) => {
+              return (
+                <a href={song.uri} key={song.id}>
+                  <Card className="transition hover:bg-secondary">
+                    <CardContent className="pt-4">
+                      <Image
+                        src={
+                          song.album.images[0].url
+                            ? song.album.images[0].url
+                            : ""
+                        }
+                        width={200}
+                        height={200}
+                        alt={song.name ? song.name : "song's name"}
+                        className="-mb-4 rounded-md"
+                      />
+                    </CardContent>
+                    <CardHeader>
+                      <CardTitle>{song.name}</CardTitle>
+                      <CardDescription>
+                        {truncateString(song.artists[0].name)}
+                      </CardDescription>
+                      <div className="flex items-center justify-center pt-2">
+                        <p className="mr-2 text-sm text-muted-foreground">
+                          {song.moodInfo?.energy}%
+                        </p>
+                        <Progress value={song.moodInfo?.energy} />
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </a>
+              );
+            })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Most Danceable Songs
+          Your Most Danceable Songs
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
@@ -278,37 +285,49 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           </h3>
         </div>
         <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {data.songInfo.map((song) => {
-            return (
-              <a href={song.uri} key={song.id}>
-                <Card className="transition hover:bg-secondary">
-                  <CardContent className="pt-4">
-                    <Image
-                      src={
-                        song.album.images[0].url ? song.album.images[0].url : ""
-                      }
-                      width={200}
-                      height={200}
-                      alt={song.name ? song.name : "song's name"}
-                      className="-mb-4 rounded-md"
-                    />
-                  </CardContent>
-                  <CardHeader>
-                    <CardTitle>{song.name}</CardTitle>
-                    <CardDescription>
-                      {truncateString(song.artists[0].name)}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </a>
-            );
-          })}
+          {[...data.songInfo]
+            .sort(
+              (a, b) =>
+                (b.moodInfo?.danceability ?? 0) -
+                (a.moodInfo?.danceability ?? 0)
+            )
+            .slice(0, 5)
+            .map((song) => {
+              return (
+                <a href={song.uri} key={song.id}>
+                  <Card className="transition hover:bg-secondary">
+                    <CardContent className="pt-4">
+                      <Image
+                        src={
+                          song.album.images[0].url
+                            ? song.album.images[0].url
+                            : ""
+                        }
+                        width={200}
+                        height={200}
+                        alt={song.name ? song.name : "song's name"}
+                        className="-mb-4 rounded-md"
+                      />
+                    </CardContent>
+                    <CardHeader>
+                      <CardTitle>{song.name}</CardTitle>
+                      <CardDescription>
+                        {truncateString(song.artists[0].name)}
+                      </CardDescription>
+                      <div className="flex items-center justify-center pt-2">
+                        <p className="mr-2 text-sm text-muted-foreground">
+                          {song.moodInfo?.danceability}%
+                        </p>
+                        <Progress value={song.moodInfo?.danceability} />
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </a>
+              );
+            })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          {loggedInUser?.user.id === userId
-            ? "Your"
-            : `${userData?.display_name || "Unknown User"}'s `}{" "}
-          Recommendations
+          Your Recommendations
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-lg text-muted-foreground ">
@@ -395,7 +414,9 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
             property="og:image"
             content={`${
               process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
-            }/api/dynamic-og-image/?userid=${afterImage}&username=${userData.display_name}`}
+            }/api/dynamic-og-image/?userid=${afterImage}&username=${
+              userData.display_name
+            }`}
           />
         )}
       </Head>
