@@ -80,6 +80,20 @@ type RecommendationData = {
   ];
 };
 
+type ProfileData = {
+  display_name: string;
+  id: string;
+  images: {
+    url: string;
+    height: number;
+    width: number;
+  }[];
+};
+
+type PlaylistData = {
+  id: string;
+};
+
 type TimePeriod = "short" | "medium" | "long";
 
 async function getUserData(timePeriod: TimePeriod, accessToken: string) {
@@ -164,6 +178,28 @@ async function getUserData(timePeriod: TimePeriod, accessToken: string) {
 }
 
 export const userRouter = createTRPCRouter({
+  getUserInfoById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const account = await ctx.prisma.account.findFirst({
+        where: { userId: input.id },
+      });
+
+      if (!account?.access_token) return;
+
+      const response: AxiosResponse<ProfileData> = await axios.get(
+        `https://api.spotify.com/v1/users/${account.providerAccountId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${account?.access_token}`,
+          },
+        }
+      );
+
+      const userInfo = response.data;
+
+      return userInfo;
+    }),
   getShortTermUserById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -222,7 +258,7 @@ export const userRouter = createTRPCRouter({
       };
     }),
   createPlaylist: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string(), uris: z.string().array() }))
     .mutation(async ({ ctx, input }) => {
       const account = await ctx.prisma.account.findFirst({
         where: { userId: input.id },
@@ -230,16 +266,27 @@ export const userRouter = createTRPCRouter({
 
       if (!account?.access_token) return;
 
-      const response = await axios.post(
-        `https://api.spotify.com/v1/users/${input.id}/playlists`,
-        { name: "new playlist", description: "test playlist", public: false },
+      const createPlaylistResponse: AxiosResponse<PlaylistData> =
+        await axios.post(
+          `https://api.spotify.com/v1/users/${account.providerAccountId}/playlists`,
+          { name: "new playlist", description: "test playlist", public: false },
+          {
+            headers: {
+              Authorization: `Bearer ${account?.access_token}`,
+            },
+          }
+        );
+
+      const playlistId = createPlaylistResponse.data.id;
+
+      await axios.post(
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+        { uris: input.uris },
         {
           headers: {
             Authorization: `Bearer ${account?.access_token}`,
           },
         }
       );
-
-      return response;
     }),
 });

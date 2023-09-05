@@ -40,14 +40,25 @@ const Home = ({
   return (
     <>
       <Head>
-        <title>statify</title>
+        <title>Statify</title>
         <meta
           name="description"
-          content="Gather all of your spotify stats here!"
+          content="Check out all of your spotify stats here!"
         />
         <link rel="icon" href="/favicon.ico" />
+        <meta name="og:title" content="Statify" />
+        <meta
+          name="og:description"
+          content="Check out all of your spotify stats here!"
+        />
+        <meta
+          property="og:image"
+          content={`${
+            process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
+          }/api/og-image`}
+        />
       </Head>
-      <PageLayout>
+      <PageLayout id="">
         {!sessionData && (
           <div className="grid h-screen lg:grid-cols-2">
             <div className="flex flex-col items-center justify-center gap-8">

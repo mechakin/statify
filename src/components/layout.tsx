@@ -1,4 +1,4 @@
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -9,8 +9,9 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { ModeToggle } from "./mode-toggle";
+import { toast } from "./ui/use-toast";
 
-export function PageLayout(props: { children: React.ReactNode }) {
+export function PageLayout(props: { children: React.ReactNode; id: string }) {
   const { data: sessionData } = useSession();
 
   return (
@@ -26,11 +27,36 @@ export function PageLayout(props: { children: React.ReactNode }) {
                 <DropdownMenuContent>
                   <DropdownMenuLabel>{sessionData.user.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Share</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(`${window.location.origin}/${props.id}`)
+                        .then(() => {
+                          toast({
+                            description: "Link successfully copied!",
+                          });
+                        })
+                        .catch((error) => console.error(error));
+                    }}
+                  >
+                    Share
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => void signOut({ callbackUrl: "/" })}
                   >
                     Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            {!sessionData && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">Menu</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => void signIn()}>
+                    Login
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

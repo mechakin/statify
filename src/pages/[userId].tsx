@@ -35,8 +35,10 @@ function truncateString(string: string) {
 }
 
 const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
-  const { data: sessionData, status } = useSession();
   const [queryEnabled, setQueryEnabled] = useState(true);
+  const { data: loggedInUser } = useSession();
+
+  const { data: userData } = api.user.getUserInfoById.useQuery({ id: userId });
 
   const { data: shortTermData } = api.user.getShortTermUserById.useQuery(
     { id: userId },
@@ -71,10 +73,11 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
 
   useEffect(() => setQueryEnabled(false), []);
 
-  if (!shortTermData || !mediumTermData || !longTermData) return <NotFound />;
+  if (!userData || !shortTermData || !mediumTermData || !longTermData)
+    return <NotFound />;
 
-  function onSubmit() {
-    mutate({ id: userId });
+  function onSubmit(uris: string[]) {
+    mutate({ id: userId, uris: uris });
   }
 
   function UserSpotifyInfo({ data, timePeriod }: UserSpotifyInfoProps) {
@@ -87,6 +90,9 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
     return (
       <>
         <h2 className="pb-2 pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
           Top Genres
         </h2>
         <div>
@@ -101,7 +107,10 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         </div>
 
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          Your Top Songs
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
+          Top Songs
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-lg text-muted-foreground lg:pt-1">
@@ -139,7 +148,10 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          Your Top Artists
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
+          Top Artists
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
@@ -172,7 +184,131 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           })}
         </div>
         <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
-          Your Recommendations
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
+          Happiest Songs
+        </h2>
+        <div className="flex w-full items-center justify-between pb-4">
+          <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
+            {isShort && "Taken from the last month."}
+            {isMedium && "Taken from the last 6 months."}
+            {isLong && "Taken from your all time listening history."}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {data.songInfo.map((song) => {
+            return (
+              <a href={song.uri} key={song.id}>
+                <Card className="transition hover:bg-secondary">
+                  <CardContent className="pt-4">
+                    <Image
+                      src={
+                        song.album.images[0].url ? song.album.images[0].url : ""
+                      }
+                      width={200}
+                      height={200}
+                      alt={song.name ? song.name : "song's name"}
+                      className="-mb-4 rounded-md"
+                    />
+                  </CardContent>
+                  <CardHeader>
+                    <CardTitle>{song.name}</CardTitle>
+                    <CardDescription>
+                      {truncateString(song.artists[0].name)}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </a>
+            );
+          })}
+        </div>
+        <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
+          Most Energetic Songs
+        </h2>
+        <div className="flex w-full items-center justify-between pb-4">
+          <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
+            {isShort && "Taken from the last month."}
+            {isMedium && "Taken from the last 6 months."}
+            {isLong && "Taken from your all time listening history."}
+          </h3>
+        </div>
+        <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {data.songInfo.map((song) => {
+            return (
+              <a href={song.uri} key={song.id}>
+                <Card className="transition hover:bg-secondary">
+                  <CardContent className="pt-4">
+                    <Image
+                      src={
+                        song.album.images[0].url ? song.album.images[0].url : ""
+                      }
+                      width={200}
+                      height={200}
+                      alt={song.name ? song.name : "song's name"}
+                      className="-mb-4 rounded-md"
+                    />
+                  </CardContent>
+                  <CardHeader>
+                    <CardTitle>{song.name}</CardTitle>
+                    <CardDescription>
+                      {truncateString(song.artists[0].name)}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </a>
+            );
+          })}
+        </div>
+        <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
+          Most Danceable Songs
+        </h2>
+        <div className="flex w-full items-center justify-between pb-4">
+          <h3 className="max-w-lg text-center text-lg text-muted-foreground lg:pt-1">
+            {isShort && "Taken from the last month."}
+            {isMedium && "Taken from the last 6 months."}
+            {isLong && "Taken from your all time listening history."}
+          </h3>
+        </div>
+        <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {data.songInfo.map((song) => {
+            return (
+              <a href={song.uri} key={song.id}>
+                <Card className="transition hover:bg-secondary">
+                  <CardContent className="pt-4">
+                    <Image
+                      src={
+                        song.album.images[0].url ? song.album.images[0].url : ""
+                      }
+                      width={200}
+                      height={200}
+                      alt={song.name ? song.name : "song's name"}
+                      className="-mb-4 rounded-md"
+                    />
+                  </CardContent>
+                  <CardHeader>
+                    <CardTitle>{song.name}</CardTitle>
+                    <CardDescription>
+                      {truncateString(song.artists[0].name)}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </a>
+            );
+          })}
+        </div>
+        <h2 className="pt-8 text-2xl font-semibold tracking-tight lg:text-3xl">
+          {loggedInUser?.user.id === userId
+            ? "Your"
+            : `${userData?.display_name || "Unknown User"}'s `}{" "}
+          Recommendations
         </h2>
         <div className="flex w-full items-center justify-between pb-4">
           <h3 className="max-w-lg text-lg text-muted-foreground ">
@@ -181,7 +317,9 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           </h3>
           <Button
             disabled={isLoading}
-            onClick={onSubmit}
+            onClick={() =>
+              onSubmit(data.recommendationInfo.tracks.map((track) => track.uri))
+            }
             className="hidden gap-2 text-base md:flex"
           >
             <Plus />
@@ -190,12 +328,15 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         </div>
         <Button
           disabled={isLoading}
-          onClick={onSubmit}
+          onClick={() =>
+            onSubmit(data.recommendationInfo.tracks.map((track) => track.uri))
+          }
           className="mb-6 flex gap-2 text-base md:hidden"
         >
           <Plus />
           Create Playlist
         </Button>
+
         <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {data.recommendationInfo.tracks.map((song) => {
             return (
@@ -209,7 +350,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       width={song.album.images[0].width}
                       height={song.album.images[0].height}
                       alt={song.name ? song.name : "song's name"}
-                      className=" -mb-4 rounded-md"
+                      className="-mb-4 rounded-md"
                     />
                   </CardContent>
                   <CardHeader>
@@ -225,32 +366,52 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
     );
   }
 
+  const url = userData.images[1]?.url;
+  const afterImage = url?.split("image/").pop();
+
   return (
     <>
       <Head>
-        <title>{sessionData?.user.name}&apos;s statify</title>
+        <title>{`${userData.display_name}'s statify`}</title>
         <meta
           name="description"
           content={
-            sessionData?.user.name
-              ? `Check out all of ${sessionData?.user?.name} spotify stats here!`
-              : `Check out this user's spotify stats here!`
+            userData.display_name
+              ? `Check out ${userData.display_name}'s Spotify stats with Statify.`
+              : "Check out this user's Spotify stats here!"
           }
         />
+        <meta name="og:title" content="Statify" />
+        <meta
+          name="og:description"
+          content={
+            userData.display_name
+              ? `Check out ${userData.display_name}'s Spotify stats with Statify.`
+              : "Check out this user's Spotify stats here!"
+          }
+        />
+        {afterImage && (
+          <meta
+            property="og:image"
+            content={`${
+              process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
+            }/api/dynamic-og-image/?userid=${afterImage}&username=${userData.display_name}`}
+          />
+        )}
       </Head>
-      <PageLayout>
+      <PageLayout id={userId}>
         <div className="flex items-center justify-center pt-20">
           <div className="flex flex-col items-center lg:flex-row lg:gap-16">
             <Image
-              src={sessionData?.user.image ? sessionData?.user.image : ""}
+              src={userData.images[1]?.url ? userData.images[1]?.url : ""}
               width={250}
               height={250}
-              alt={sessionData?.user.name ? sessionData?.user.name : "user"}
+              alt={userData.display_name ? userData.display_name : "user"}
               className="rounded-full"
             />
             <h1 className="pt-2 text-center text-4xl font-bold leading-tight tracking-tighter lg:pt-0 lg:text-5xl lg:leading-[1.1]">
-              {sessionData?.user.name}
-              {status === "authenticated" && "'s statify"}
+              {userData.display_name}
+              {"'s statify"}
             </h1>
           </div>
         </div>
@@ -302,6 +463,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     };
   }
 
+  await ssg.user.getUserInfoById.prefetch({ id: userId });
   await ssg.user.getShortTermUserById.prefetch({ id: userId });
   await ssg.user.getMediumTermUserById.prefetch({ id: userId });
   await ssg.user.getLongTermUserById.prefetch({ id: userId });

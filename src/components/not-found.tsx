@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 export default function NotFound() {
   return (
-    <PageLayout>
+    <PageLayout id="">
       <Head>
         <title>Page not found</title>
       </Head>
