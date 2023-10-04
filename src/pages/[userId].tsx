@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
+import { Spinner } from "~/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { toast } from "~/components/ui/use-toast";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
@@ -28,8 +29,8 @@ type UserSpotifyInfoProps = {
 };
 
 function truncateString(string: string) {
-  if (string.length > 18) {
-    return string.substring(0, 18) + "...";
+  if (string.length > 40) {
+    return string.substring(0, 40) + "...";
   }
   return string;
 }
@@ -44,15 +45,17 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
     { enabled: queryEnabled }
   );
 
-  const { data: mediumTermData } = api.user.getMediumTermUserById.useQuery(
-    { id: userId },
-    { enabled: queryEnabled }
-  );
+  const { data: mediumTermData, isLoading: mediumTermDataIsLoading } =
+    api.user.getMediumTermUserById.useQuery(
+      { id: userId },
+      { enabled: queryEnabled }
+    );
 
-  const { data: longTermData } = api.user.getLongTermUserById.useQuery(
-    { id: userId },
-    { enabled: queryEnabled }
-  );
+  const { data: longTermData, isLoading: longTermDataIsLoading } =
+    api.user.getLongTermUserById.useQuery(
+      { id: userId },
+      { enabled: queryEnabled }
+    );
 
   const { mutate, isLoading } = api.user.createPlaylist.useMutation({
     onSuccess: () => {
@@ -72,8 +75,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
 
   useEffect(() => setQueryEnabled(false), []);
 
-  if (!userData || !shortTermData || !mediumTermData || !longTermData)
-    return <NotFound />;
+  if (!userData || !shortTermData) return <NotFound />;
 
   function onSubmit(uris: string[]) {
     mutate({ id: userId, uris: uris });
@@ -130,10 +132,8 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                     />
                   </CardContent>
                   <CardHeader>
-                    <CardTitle>{song.name}</CardTitle>
-                    <CardDescription>
-                      {truncateString(song.artists[0].name)}
-                    </CardDescription>
+                    <CardTitle>{truncateString(song.name)}</CardTitle>
+                    <CardDescription>{song.artists[0].name}</CardDescription>
                   </CardHeader>
                 </Card>
               </a>
@@ -208,10 +208,8 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       />
                     </CardContent>
                     <CardHeader>
-                      <CardTitle>{song.name}</CardTitle>
-                      <CardDescription>
-                        {truncateString(song.artists[0].name)}
-                      </CardDescription>
+                      <CardTitle>{truncateString(song.name)}</CardTitle>
+                      <CardDescription>{song.artists[0].name}</CardDescription>
                       <div className="flex items-center justify-center pt-2">
                         <p className="mr-2 text-sm text-muted-foreground">
                           {song.moodInfo?.valence}%
@@ -258,10 +256,8 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       />
                     </CardContent>
                     <CardHeader>
-                      <CardTitle>{song.name}</CardTitle>
-                      <CardDescription>
-                        {truncateString(song.artists[0].name)}
-                      </CardDescription>
+                      <CardTitle>{truncateString(song.name)}</CardTitle>
+                      <CardDescription>{song.artists[0].name}</CardDescription>
                       <div className="flex items-center justify-center pt-2">
                         <p className="mr-2 text-sm text-muted-foreground">
                           {song.moodInfo?.energy}%
@@ -310,10 +306,8 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       />
                     </CardContent>
                     <CardHeader>
-                      <CardTitle>{song.name}</CardTitle>
-                      <CardDescription>
-                        {truncateString(song.artists[0].name)}
-                      </CardDescription>
+                      <CardTitle>{truncateString(song.name)}</CardTitle>
+                      <CardDescription>{song.artists[0].name}</CardDescription>
                       <div className="flex items-center justify-center pt-2">
                         <p className="mr-2 text-sm text-muted-foreground">
                           {song.moodInfo?.danceability}%
@@ -457,9 +451,11 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
             </TabsContent>
             <TabsContent value="last-6-months">
               <UserSpotifyInfo data={mediumTermData} timePeriod="medium" />
+              {mediumTermDataIsLoading && <Spinner />}
             </TabsContent>
             <TabsContent value="all-time">
               <UserSpotifyInfo data={longTermData} timePeriod="long" />
+              {longTermDataIsLoading && <Spinner />}
             </TabsContent>
           </Tabs>
         </div>
@@ -486,8 +482,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   await ssg.user.getUserInfoById.prefetch({ id: userId });
   await ssg.user.getShortTermUserById.prefetch({ id: userId });
-  await ssg.user.getMediumTermUserById.prefetch({ id: userId });
-  await ssg.user.getLongTermUserById.prefetch({ id: userId });
 
   return {
     props: {
