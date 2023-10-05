@@ -58,6 +58,18 @@ const Home = ({
             process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
           }/api/og-image`}
         />
+        <meta
+          property="twitter:image"
+          content={`${
+            process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
+          }/api/og-image`}
+        />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="Statify" />
+        <meta
+          property="twitter:description"
+          content="Check out all of your spotify stats here!"
+        />
       </Head>
       <PageLayout id="">
         <div className="grid h-screen lg:grid-cols-2">

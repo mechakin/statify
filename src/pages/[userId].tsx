@@ -403,15 +403,35 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
               : "Check out this user's Spotify stats here!"
           }
         />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="Statify" />
+        <meta
+          property="twitter:description"
+          content="Check out all of your spotify stats here!"
+        />
         {afterImage && (
-          <meta
-            property="og:image"
-            content={`${
-              process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
-            }/api/dynamic-og-image/?userid=${afterImage}&username=${
-              userData.display_name
-            }`}
-          />
+          <>
+            <meta
+              property="og:image"
+              content={`${
+                process.env.VERCEL_URL
+                  ? "https://" + process.env.VERCEL_URL
+                  : ""
+              }/api/dynamic-og-image/?userid=${afterImage}&username=${
+                userData.display_name
+              }`}
+            />
+            <meta
+              property="twitter:image"
+              content={`${
+                process.env.VERCEL_URL
+                  ? "https://" + process.env.VERCEL_URL
+                  : ""
+              }/api/dynamic-og-image/?userid=${afterImage}&username=${
+                userData.display_name
+              }`}
+            />
+          </>
         )}
       </Head>
       <PageLayout id={userId}>
