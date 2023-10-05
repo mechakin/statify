@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import { Plus } from "lucide-react";
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { PageLayout } from "~/components/layout";
 import NotFound from "~/components/not-found";
@@ -121,7 +121,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
               <a href={song.uri} key={song.id}>
                 <Card className="transition hover:bg-secondary">
                   <CardContent className="pt-4">
-                    <Image
+                    <img
                       src={
                         song.album.images[0].url ? song.album.images[0].url : ""
                       }
@@ -156,7 +156,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
               <a href={artist.uri} key={artist.name}>
                 <Card className="transition hover:bg-secondary">
                   <CardContent className="pt-4">
-                    <Image
+                    <img
                       src={artist.images[0].url ? artist.images[0].url : ""}
                       width={artist.images[0].width}
                       height={artist.images[0].height}
@@ -195,7 +195,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                 <a href={song.uri} key={song.id}>
                   <Card className="transition hover:bg-secondary">
                     <CardContent className="pt-4">
-                      <Image
+                      <img
                         src={
                           song.album.images[0].url
                             ? song.album.images[0].url
@@ -243,7 +243,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                 <a href={song.uri} key={song.id}>
                   <Card className="transition hover:bg-secondary">
                     <CardContent className="pt-4">
-                      <Image
+                      <img
                         src={
                           song.album.images[0].url
                             ? song.album.images[0].url
@@ -293,7 +293,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                 <a href={song.uri} key={song.id}>
                   <Card className="transition hover:bg-secondary">
                     <CardContent className="pt-4">
-                      <Image
+                      <img
                         src={
                           song.album.images[0].url
                             ? song.album.images[0].url
@@ -356,7 +356,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
               <a href={song.uri} key={song.name}>
                 <Card className="transition hover:bg-secondary">
                   <CardContent className="pt-4">
-                    <Image
+                    <img
                       src={
                         song.album.images[0].url ? song.album.images[0].url : ""
                       }
@@ -417,7 +417,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
       <PageLayout id={userId}>
         <div className="flex items-center justify-center pt-20">
           <div className="flex flex-col items-center lg:flex-row lg:gap-16">
-            <Image
+            <img
               src={userData.images[1]?.url ? userData.images[1]?.url : ""}
               width={250}
               height={250}

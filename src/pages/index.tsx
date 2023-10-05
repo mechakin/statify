@@ -5,6 +5,7 @@ import {
 import { getServerSession } from "next-auth";
 import { getProviders, signIn, useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SpotifyIcon } from "~/components/icons";
 import { PageLayout } from "~/components/layout";
@@ -59,17 +60,17 @@ const Home = ({
         />
       </Head>
       <PageLayout id="">
-        {!sessionData && (
-          <div className="grid h-screen lg:grid-cols-2">
-            <div className="flex flex-col items-center justify-center gap-8">
-              <h1 className="text-8xl font-bold leading-tight tracking-tighter lg:leading-[1.1]">
-                Statify
-              </h1>
-              <p className="max-w-lg text-center text-lg text-muted-foreground sm:text-xl">
-                Learn more about your Spotify listening history with
-                personalized stats and moods for your favorite songs.
-              </p>
-              {Object.values(providers).map((provider) => (
+        <div className="grid h-screen lg:grid-cols-2">
+          <div className="flex flex-col items-center justify-center gap-8">
+            <h1 className="text-8xl font-bold leading-tight tracking-tighter lg:leading-[1.1]">
+              Statify
+            </h1>
+            <p className="max-w-lg text-center text-lg text-muted-foreground sm:text-xl">
+              Learn more about your Spotify listening history with personalized
+              stats and moods for your favorite songs.
+            </p>
+            {!sessionData &&
+              Object.values(providers).map((provider) => (
                 <div key={provider.name}>
                   <Button
                     onClick={() => void signIn(provider.id)}
@@ -80,19 +81,23 @@ const Home = ({
                   </Button>
                 </div>
               ))}
-            </div>
-            <div
-              ref={ref}
-              className="m-auto hidden flex-col items-center justify-center lg:flex"
-              style={{
-                transform: `perspective(500px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-                transition: "transform 0.1s linear",
-              }}
-            >
-              <SpotifyIcon className="fill-black dark:fill-white lg:w-96" />
-            </div>
+            {sessionData && (
+              <Button size={"lg"} className="text-xl">
+                <Link href={`/${sessionData.user.id}`}>View your statify</Link>
+              </Button>
+            )}
           </div>
-        )}
+          <div
+            ref={ref}
+            className="m-auto hidden flex-col items-center justify-center lg:flex"
+            style={{
+              transform: `perspective(500px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+              transition: "transform 0.1s linear",
+            }}
+          >
+            <SpotifyIcon className="fill-black dark:fill-white lg:w-96" />
+          </div>
+        </div>
       </PageLayout>
     </>
   );
