@@ -2,6 +2,7 @@
 import { Plus } from "lucide-react";
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
+
 import { useEffect, useState } from "react";
 import { PageLayout } from "~/components/layout";
 import NotFound from "~/components/not-found";
@@ -128,7 +129,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       width={200}
                       height={200}
                       alt={song.name ? song.name : "song's name"}
-                      className="-mb-4 rounded-md"
+                      className="-mb-4"
                     />
                   </CardContent>
                   <CardHeader>
@@ -161,7 +162,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       width={artist.images[0].width}
                       height={artist.images[0].height}
                       alt={artist.name ? artist.name : "artist's name"}
-                      className="-mb-4 rounded-md"
+                      className="-mb-4"
                     />
                   </CardContent>
                   <CardHeader>
@@ -204,7 +205,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                         width={200}
                         height={200}
                         alt={song.name ? song.name : "song's name"}
-                        className="-mb-4 rounded-md"
+                        className="-mb-4"
                       />
                     </CardContent>
                     <CardHeader>
@@ -252,7 +253,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                         width={200}
                         height={200}
                         alt={song.name ? song.name : "song's name"}
-                        className="-mb-4 rounded-md"
+                        className="-mb-4"
                       />
                     </CardContent>
                     <CardHeader>
@@ -302,7 +303,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                         width={200}
                         height={200}
                         alt={song.name ? song.name : "song's name"}
-                        className="-mb-4 rounded-md"
+                        className="-mb-4"
                       />
                     </CardContent>
                     <CardHeader>
@@ -363,7 +364,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
                       width={song.album.images[0].width}
                       height={song.album.images[0].height}
                       alt={song.name ? song.name : "song's name"}
-                      className="-mb-4 rounded-md"
+                      className="-mb-4"
                     />
                   </CardContent>
                   <CardHeader>
@@ -403,35 +404,15 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
               : "Check out this user's Spotify stats here!"
           }
         />
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content="Statify" />
-        <meta
-          property="twitter:description"
-          content="Check out all of your spotify stats here!"
-        />
         {afterImage && (
-          <>
-            <meta
-              property="og:image"
-              content={`${
-                process.env.VERCEL_URL
-                  ? "https://" + process.env.VERCEL_URL
-                  : ""
-              }/api/dynamic-og-image/?userid=${afterImage}&username=${
-                userData.display_name
-              }`}
-            />
-            <meta
-              property="twitter:image"
-              content={`${
-                process.env.VERCEL_URL
-                  ? "https://" + process.env.VERCEL_URL
-                  : ""
-              }/api/dynamic-og-image/?userid=${afterImage}&username=${
-                userData.display_name
-              }`}
-            />
-          </>
+          <meta
+            property="og:image"
+            content={`${
+              process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : ""
+            }/api/dynamic-og-image/?userid=${afterImage}&username=${
+              userData.display_name
+            }`}
+          />
         )}
       </Head>
       <PageLayout id={userId}>

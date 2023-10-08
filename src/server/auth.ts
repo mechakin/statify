@@ -107,7 +107,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
       authorization: {
         params: {
-          scope: "user-read-email user-top-read playlist-modify-public playlist-modify-private",
+          scope:
+            "user-top-read playlist-modify-public playlist-modify-private",
         },
       },
     }),
