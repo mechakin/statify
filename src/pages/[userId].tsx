@@ -2,8 +2,6 @@
 import { Plus } from "lucide-react";
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
-
-import { useEffect, useState } from "react";
 import { PageLayout } from "~/components/layout";
 import NotFound from "~/components/not-found";
 import { Badge } from "~/components/ui/badge";
@@ -16,7 +14,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
-import { Spinner } from "~/components/ui/spinner";
+import { Skeleton } from "~/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { toast } from "~/components/ui/use-toast";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
@@ -37,26 +35,18 @@ function truncateString(string: string) {
 }
 
 const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
-  const [queryEnabled, setQueryEnabled] = useState(true);
-
   const { data: userData } = api.user.getUserInfoById.useQuery({ id: userId });
 
-  const { data: shortTermData } = api.user.getShortTermUserById.useQuery(
-    { id: userId },
-    { enabled: queryEnabled }
-  );
+  const { data: shortTermData, isLoading: shortTermDataIsLoading } =
+    api.user.getShortTermUserById.useQuery({
+      id: userId,
+    });
 
   const { data: mediumTermData, isLoading: mediumTermDataIsLoading } =
-    api.user.getMediumTermUserById.useQuery(
-      { id: userId },
-      { enabled: queryEnabled }
-    );
+    api.user.getMediumTermUserById.useQuery({ id: userId });
 
   const { data: longTermData, isLoading: longTermDataIsLoading } =
-    api.user.getLongTermUserById.useQuery(
-      { id: userId },
-      { enabled: queryEnabled }
-    );
+    api.user.getLongTermUserById.useQuery({ id: userId });
 
   const { mutate, isLoading } = api.user.createPlaylist.useMutation({
     onSuccess: () => {
@@ -74,9 +64,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
     },
   });
 
-  useEffect(() => setQueryEnabled(false), []);
-
-  if (!userData || !shortTermData) return <NotFound />;
+  if (!userData) return <NotFound />;
 
   function onSubmit(uris: string[]) {
     mutate({ id: userId, uris: uris });
@@ -383,6 +371,44 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
   const url = userData.images[1]?.url;
   const afterImage = url?.split("image/").pop();
 
+  const loading = (
+    <>
+      <div className="grid min-w-max grid-cols-2 gap-4 pb-2 pt-6 xs:grid-cols-3 md:grid-cols-5 lg:grid-cols-7">
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+        <Skeleton className="w-34 h-12" />
+      </div>
+      <div className="grid grid-cols-2 gap-4 pb-2 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="h-56 w-52" />
+        <Skeleton className="h-56 w-52 " />
+      </div>
+      <div className="grid grid-cols-2 gap-4 pb-2 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="h-56 w-52" />
+        <Skeleton className="h-56 w-52 " />
+      </div>
+      <div className="grid grid-cols-2 gap-4 pb-8 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <Skeleton className="h-56 w-52" />
+        <Skeleton className="h-56 w-52" />
+        <Skeleton className="h-56 w-52" />
+        <Skeleton className="h-56 w-52" />
+        <Skeleton className="h-56 w-52" />
+      </div>
+    </>
+  );
+
   return (
     <>
       <Head>
@@ -449,14 +475,15 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
             </TabsList>
             <TabsContent value="last-month">
               <UserSpotifyInfo data={shortTermData} timePeriod="short" />
+              {shortTermDataIsLoading && loading}
             </TabsContent>
             <TabsContent value="last-6-months">
               <UserSpotifyInfo data={mediumTermData} timePeriod="medium" />
-              {mediumTermDataIsLoading && <Spinner />}
+              {mediumTermDataIsLoading && loading}
             </TabsContent>
             <TabsContent value="all-time">
               <UserSpotifyInfo data={longTermData} timePeriod="long" />
-              {longTermDataIsLoading && <Spinner />}
+              {longTermDataIsLoading && loading}
             </TabsContent>
           </Tabs>
         </div>
@@ -482,7 +509,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 
   await ssg.user.getUserInfoById.prefetch({ id: userId });
-  await ssg.user.getShortTermUserById.prefetch({ id: userId });
 
   return {
     props: {
