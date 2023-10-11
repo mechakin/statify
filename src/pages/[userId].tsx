@@ -52,7 +52,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
     onSuccess: () => {
       toast({
         title: "Congrats!",
-        description: "Playlist successfully created.",
+        description: "Playlist successfully created in Spotify.",
       });
     },
     onError: () => {
@@ -339,7 +339,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
           Create Playlist
         </Button>
 
-        <div className="grid grid-cols-2 gap-4 pb-8 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {data.recommendationInfo.tracks.map((song) => {
             return (
               <a href={song.uri} key={song.name}>
