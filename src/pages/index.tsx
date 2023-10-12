@@ -7,10 +7,10 @@ import { getProviders, signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { SpotifyIcon } from "~/components/icons";
 import { PageLayout } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import { authOptions } from "~/server/auth";
+import { SpotifyIcon } from "~/components/icons";
 
 const Home = ({
   providers,
@@ -107,7 +107,7 @@ const Home = ({
               transition: "transform 0.1s linear",
             }}
           >
-            <SpotifyIcon className="fill-black dark:fill-white lg:w-96" />
+            <SpotifyIcon className="lg:w-96" />
           </div>
         </div>
       </PageLayout>
