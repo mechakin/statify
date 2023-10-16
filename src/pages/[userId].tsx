@@ -386,25 +386,28 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         <Skeleton className="w-34 h-12" />
       </div>
       <div className="grid grid-cols-2 gap-4 pb-2 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        <Skeleton className="h-56 w-52 " />
-        <Skeleton className="h-56 w-52 " />
-        <Skeleton className="h-56 w-52 " />
-        <Skeleton className="h-56 w-52" />
-        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
       </div>
       <div className="grid grid-cols-2 gap-4 pb-2 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        <Skeleton className="h-56 w-52 " />
-        <Skeleton className="h-56 w-52 " />
-        <Skeleton className="h-56 w-52 " />
-        <Skeleton className="h-56 w-52" />
-        <Skeleton className="h-56 w-52 " />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
       </div>
-      <div className="grid grid-cols-2 gap-4 pb-8 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        <Skeleton className="h-56 w-52" />
-        <Skeleton className="h-56 w-52" />
-        <Skeleton className="h-56 w-52" />
-        <Skeleton className="h-56 w-52" />
-        <Skeleton className="h-56 w-52" />
+      <div className="grid grid-cols-2 gap-4 pb-2 pt-6 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+        <Skeleton className="w-38 h-56 lg:w-48 xl:w-52" />
+      </div>
+      <div className="invisible grid grid-cols-2  gap-4 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <Skeleton className="w-38 h-0 xs:w-52" />
       </div>
     </>
   );
