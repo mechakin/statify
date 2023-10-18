@@ -1,28 +1,64 @@
-# Create T3 App
+![demo](https://media.discordapp.net/attachments/1106206570091663410/1163612175546458213/demo-1.png?ex=65403549&is=652dc049&hm=6ffce081a06be2c2dee04be19706877a6eebaf39ef70c239fcfcf0c28a4ede08&=&width=954&height=537)
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## About
 
-## What's next? How do I make an app with this?
+VGList is a website designed to cater to your every gaming need. Here, users can seamlessly log, rate, review, and discuss a wide array of video games, creating an interactive space to share their gaming experiences. Whether you're an avid gamer or just starting out, this site is your go-to hub to keep track of the games you've played, explore exciting new titles, and engage in lively discussions about your favorite video games. With a user-friendly interface, our website fosters a sense of community among gamers, making it easy to connect with like-minded enthusiasts and uncover hidden gems in the gaming world.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+You can see the website live in action here:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Contributing
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+To contribute you will first need to fork the repo and make some adjustments to get it up and running on your local machine. Below are the steps to follow for you to get TypeHero to run on your local machine.
 
-## Learn More
+1. Create a `env` file
+   Provide your values as needed. The .env values can be seen in the `.env.example` file.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+2. Configure your database
+   You can use PlanetScale to run your database by [following this link.](https://planetscale.com/docs/tutorials/planetscale-quick-start-guide) After creating an account and creating a database, click the big connect button, select connect with Prisma and then copy the `DATABASE_URL` for your `.env` file.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+3. Create a new Spotify application
+   [Follow this link](https://developer.spotify.com/documentation/web-api/concepts/apps) to create a new app filling the following required details on creation:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+   ```
+   Website: http://localhost:3000/
+   Redirect URI: http://localhost:3000/api/auth/callback/spotify
+   ```
 
-## How do I deploy this?
+   Once completed, you will be redirected to the application page settings. From there, copy the `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` into the `.env` file.
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+In the end your local `.env` file should look something like the following:
+
+```
+DATABASE_URL='mysql://dev:dev@localhost/statify'
+
+# Next Auth
+# You can generate a new secret on the command line with:
+# openssl rand -base64 32
+# https://next-auth.js.org/configuration/options#secret
+
+NEXTAUTH_SECRET=""
+NEXTAUTH_URL="http://localhost:3000"
+
+SPOTIFY_CLIENT_ID="real_client_id"
+SPOTIFY_CLIENT_SECRET="real_client_id"
+```
+
+5. Install dependencies
+   Use pnpm to install dependencies.
+
+   ```
+   pnpm install
+   ```
+
+6. Push database schema
+
+   ```
+   pnpm prisma db push
+   ```
+
+7. Running the dev server
+   Finally, you can run the dev server:
+
+   ```
+   pnpm dev
+   ```

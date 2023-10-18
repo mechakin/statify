@@ -448,7 +448,7 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
         <div className="flex items-center justify-center pt-20">
           <div className="flex flex-col items-center lg:flex-row lg:gap-16">
             <img
-              src={userData.images[1]?.url ? userData.images[1]?.url : ""}
+              src={userData.images[1]?.url ? userData.images[1]?.url : "/user.png"}
               width={250}
               height={250}
               alt={userData.display_name ? userData.display_name : "user"}
