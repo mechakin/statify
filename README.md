@@ -4,7 +4,7 @@
 
 VGList is a website designed to cater to your every gaming need. Here, users can seamlessly log, rate, review, and discuss a wide array of video games, creating an interactive space to share their gaming experiences. Whether you're an avid gamer or just starting out, this site is your go-to hub to keep track of the games you've played, explore exciting new titles, and engage in lively discussions about your favorite video games. With a user-friendly interface, our website fosters a sense of community among gamers, making it easy to connect with like-minded enthusiasts and uncover hidden gems in the gaming world.
 
-You can see the website live in action here:
+You can see the website live in action here: [https://youtu.be/DwYvO98_IYk]
 
 ## Contributing
 
