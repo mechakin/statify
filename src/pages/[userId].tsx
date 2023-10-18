@@ -35,7 +35,10 @@ function truncateString(string: string) {
 }
 
 const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
-  const { data: userData } = api.user.getUserInfoById.useQuery({ id: userId });
+  const { data: userData } = api.user.getUserInfoById.useQuery(
+    { id: userId },
+    { staleTime: 5 * 600, cacheTime: 60 * 600 }
+  );
 
   const { data: shortTermData, isLoading: shortTermDataIsLoading } =
     api.user.getShortTermUserById.useQuery(
