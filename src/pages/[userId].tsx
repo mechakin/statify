@@ -42,19 +42,19 @@ const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
       {
         id: userId,
       },
-      { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+      { staleTime: 5 * 600, cacheTime: 60 * 600 }
     );
 
   const { data: mediumTermData, isLoading: mediumTermDataIsLoading } =
     api.user.getMediumTermUserById.useQuery(
       { id: userId },
-      { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+      { staleTime: 5 * 600, cacheTime: 60 * 600 }
     );
 
   const { data: longTermData, isLoading: longTermDataIsLoading } =
     api.user.getLongTermUserById.useQuery(
       { id: userId },
-      { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+      { staleTime: 5 * 600, cacheTime: 60 * 600 }
     );
 
   const { mutate, isLoading } = api.user.createPlaylist.useMutation({
