@@ -35,18 +35,30 @@ function truncateString(string: string) {
 }
 
 const UserPage: NextPage<{ userId: string }> = ({ userId }) => {
-  const { data: userData } = api.user.getUserInfoById.useQuery({ id: userId });
+  const { data: userData } = api.user.getUserInfoById.useQuery(
+    { id: userId },
+    { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+  );
 
   const { data: shortTermData, isLoading: shortTermDataIsLoading } =
-    api.user.getShortTermUserById.useQuery({
-      id: userId,
-    });
+    api.user.getShortTermUserById.useQuery(
+      {
+        id: userId,
+      },
+      { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+    );
 
   const { data: mediumTermData, isLoading: mediumTermDataIsLoading } =
-    api.user.getMediumTermUserById.useQuery({ id: userId });
+    api.user.getMediumTermUserById.useQuery(
+      { id: userId },
+      { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+    );
 
   const { data: longTermData, isLoading: longTermDataIsLoading } =
-    api.user.getLongTermUserById.useQuery({ id: userId });
+    api.user.getLongTermUserById.useQuery(
+      { id: userId },
+      { staleTime: 5 * 60000, cacheTime: 60 * 60000 }
+    );
 
   const { mutate, isLoading } = api.user.createPlaylist.useMutation({
     onSuccess: () => {
