@@ -2,7 +2,7 @@
 
 ## About
 
-VGList is a website designed to cater to your every gaming need. Here, users can seamlessly log, rate, review, and discuss a wide array of video games, creating an interactive space to share their gaming experiences. Whether you're an avid gamer or just starting out, this site is your go-to hub to keep track of the games you've played, explore exciting new titles, and engage in lively discussions about your favorite video games. With a user-friendly interface, our website fosters a sense of community among gamers, making it easy to connect with like-minded enthusiasts and uncover hidden gems in the gaming world.
+Statify is a web app designed to make your Spotify experience more fun and insightful. Our platform lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song. You can also create and save playlists of recommended songs based on what you already love. It's a one-stop solution for Spotify fans who want to understand their music taste better, find new songs, and easily make cool playlists. Our website is all about making your Spotify journey more enjoyable and shareable. 
 
 You can see the website live in action here: [https://youtu.be/DwYvO98_IYk]
 
