@@ -2,7 +2,7 @@
 
 ## About
 
-Statify lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song listed. You can also create and save playlists of recommended songs based on what you already love. 
+Statify lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song listed. You can also create and save playlists of recommended songs based on songs and artists you are currently listening to. 
 
 You can see the website live in action here: [https://youtu.be/DwYvO98_IYk]
 
