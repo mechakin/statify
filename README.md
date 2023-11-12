@@ -2,8 +2,7 @@
 
 ## About
 
-Statify is a web app designed to make your Spotify experience more fun and insightful. Our platform lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song. You can also create and save playlists of recommended songs based on what you already love. It's a one-stop solution for Spotify fans who want to understand their music taste better, find new songs, and easily make cool playlists. Our website is all about making your Spotify journey more enjoyable and shareable. 
-
+Statify lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song listed. You can also create and save playlists of recommended songs based on what you already love. 
 You can see the website live in action here: [https://youtu.be/DwYvO98_IYk]
 
 ## Contributing
