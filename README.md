@@ -44,6 +44,7 @@ SPOTIFY_CLIENT_SECRET="real_client_id"
 ```
 
 5. Install dependencies
+
    Use pnpm to install dependencies.
 
    ```
@@ -57,6 +58,7 @@ SPOTIFY_CLIENT_SECRET="real_client_id"
    ```
 
 7. Running the dev server
+
    Finally, you can run the dev server:
 
    ```
