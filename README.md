@@ -11,12 +11,15 @@ You can see the website live in action here: [https://youtu.be/DwYvO98_IYk]
 To contribute you will first need to fork the repo and make some adjustments to get it up and running on your local machine. Below are the steps to follow for you to get Statify to run on your local machine.
 
 1. Create a `env` file
+
    Provide your values as needed. The .env values can be seen in the `.env.example` file.
 
 2. Configure your database
+
    You can use PlanetScale to run your database by [following this link.](https://planetscale.com/docs/tutorials/planetscale-quick-start-guide) After creating an account and creating a database, click the big connect button, select connect with Prisma and then copy the `DATABASE_URL` for your `.env` file.
 
 3. Create a new Spotify application
+
    [Follow this link](https://developer.spotify.com/documentation/web-api/concepts/apps) to create a new app filling the following required details on creation:
 
    ```
