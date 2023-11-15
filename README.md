@@ -2,21 +2,24 @@
 
 ## About
 
-Statify is a web app designed to make your Spotify experience more fun and insightful. Our platform lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song. You can also create and save playlists of recommended songs based on what you already love. It's a one-stop solution for Spotify fans who want to understand their music taste better, find new songs, and easily make cool playlists. Our website is all about making your Spotify journey more enjoyable and shareable. 
+Statify lets you see your top artists, favorite tracks, and what you've been listening to recently, with extra details about each song listed. You can also create and save playlists of recommended songs based on songs and artists you are currently listening to. 
 
 You can see the website live in action here: [https://youtu.be/DwYvO98_IYk]
 
 ## Contributing
 
-To contribute you will first need to fork the repo and make some adjustments to get it up and running on your local machine. Below are the steps to follow for you to get TypeHero to run on your local machine.
+To contribute you will first need to fork the repo and make some adjustments to get it up and running on your local machine. Below are the steps to follow for you to get Statify to run on your local machine.
 
 1. Create a `env` file
+
    Provide your values as needed. The .env values can be seen in the `.env.example` file.
 
 2. Configure your database
+
    You can use PlanetScale to run your database by [following this link.](https://planetscale.com/docs/tutorials/planetscale-quick-start-guide) After creating an account and creating a database, click the big connect button, select connect with Prisma and then copy the `DATABASE_URL` for your `.env` file.
 
 3. Create a new Spotify application
+
    [Follow this link](https://developer.spotify.com/documentation/web-api/concepts/apps) to create a new app filling the following required details on creation:
 
    ```
@@ -44,6 +47,7 @@ SPOTIFY_CLIENT_SECRET="real_client_id"
 ```
 
 5. Install dependencies
+
    Use pnpm to install dependencies.
 
    ```
@@ -57,6 +61,7 @@ SPOTIFY_CLIENT_SECRET="real_client_id"
    ```
 
 7. Running the dev server
+
    Finally, you can run the dev server:
 
    ```
